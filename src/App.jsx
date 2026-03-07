@@ -1,11 +1,11 @@
-import {Routes, Route, MemoryRouter} from "react-router-dom"
+import {Routes, Route, HashRouter} from "react-router-dom"
 import Header from "./components/Header"
 import Home from "./pages/Home"
 import Album from "./pages/Album"
 
 export default function App() {
     return (
-        <MemoryRouter>
+        <HashRouter>
             <div className="min-h-screen bg-black text-white">
                 <Header/>
 
@@ -19,6 +19,6 @@ export default function App() {
                 </main>
 
             </div>
-        </MemoryRouter>
+        </HashRouter>
     )
 }
