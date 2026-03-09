@@ -1,14 +1,19 @@
 import AlbumCard from "../components/AlbumCard"
 import {useParams} from "react-router-dom";
+import {PageData, RouteParams} from "../types";
 
-export default function Home({pageData}) {
+type Props = {
+    pageData: PageData
+}
 
-    const {languageIso} = useParams();
+export default function Home(props: Props) {
+
+    const {languageIso} = useParams() as RouteParams;
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
 
-            {pageData.albums.map(album => (
+            {props.pageData.albums.map(album => (
                 <AlbumCard key={album.id} album={album} languageIso={languageIso}/>
             ))}
 

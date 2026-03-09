@@ -1,8 +1,9 @@
 import {get, set} from 'idb-keyval';
+import {AssetCachePort} from "../types";
 
-class AssetCache {
+class AssetCache implements AssetCachePort {
 
-    async fetchAndStore(url) {
+    async fetchAndStore(url: string) {
         const existing = await this.retrieveBase64Src(url);
 
         if (existing) {
@@ -23,7 +24,7 @@ class AssetCache {
         await set(url, src);
     }
 
-    async retrieveBase64Src(url) {
+    async retrieveBase64Src(url: string): Promise<string | null> {
         return (await get(url)) ?? null;
     }
 }

@@ -1,16 +1,23 @@
-import {useState} from "react";
+import {ChangeEvent, useState} from "react";
+import {Language} from "../types";
 
-export default function LanguageSelector({languages, onSelect, initialValue}) {
+type Props = {
+    languages: Language[],
+    onSelect: (newIso: string) => void,
+    initialValue: string,
+}
 
-    const [value, setValue] = useState(initialValue);
+export default function LanguageSelector(props: Props) {
 
-    const handleSelect = (e) => {
+    const [value, setValue] = useState(props.initialValue);
+
+    const handleSelect = (e: ChangeEvent<HTMLSelectElement>) => {
 
         const targetValue = e.target.value;
 
         setValue(targetValue);
 
-        onSelect(targetValue);
+        props.onSelect(targetValue);
     }
 
     return <>
@@ -20,7 +27,7 @@ export default function LanguageSelector({languages, onSelect, initialValue}) {
                 onChange={handleSelect}
                 className="appearance-none bg-transparent border border-gray-700 text-gray-300 py-2 pl-4 pr-10 rounded-lg focus:outline-none focus:border-blue-500 cursor-pointer hover:border-gray-500 transition-colors">
 
-                {languages.map(language =>
+                {props.languages.map(language =>
                     <option key={language.iso} value={language.iso} className="bg-gray-900 text-white">{language.name}</option>
                 )}
             </select>

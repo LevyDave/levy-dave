@@ -1,21 +1,31 @@
 import {useParams} from "react-router-dom"
 import {motion} from "framer-motion"
-import ActionButton from "../components/ActionButton.jsx";
+import ActionButton from "../components/ActionButton";
+import {PageData, RouteParams} from "../types";
 
-export default function Album({pageData}) {
+type Props = {
+    pageData: PageData
+}
 
-    const {languageIso, id} = useParams();
+export default function Album(props: Props) {
 
-    const album = pageData.albums.find(a => a.id === id);
+    const {languageIso, id} = useParams() as RouteParams;
+
+    const album = props.pageData.albums.find(a => a.id === id);
+
+    if (!album) {
+        return <></>;
+    }
 
     return (
 
         <div>
             <div className="mb-6">
                 <ActionButton
-                    text={pageData.translations.backButton[languageIso]}
+                    text={props.pageData.translations.backButton[languageIso]}
                     linkUrl={`/${languageIso}`}
-                    variantId={"ghost"}
+                    variant={"ghost"}
+                    isDisabled={false}
                 />
             </div>
             <div className="grid grid-cold-1 md:grid-cols-2 gap-8">
@@ -45,9 +55,9 @@ export default function Album({pageData}) {
 
                     <div>
                         <ActionButton
-                            text={pageData.translations.orderButton[languageIso]}
-                            linkUrl={pageData.config.purchaseFormUrl}
-                            variantId={"primary"}
+                            text={props.pageData.translations.orderButton[languageIso]}
+                            linkUrl={props.pageData.config.purchaseFormUrl}
+                            variant={"primary"}
                             isDisabled={!album.isAvailableForPurchase}
                         />
                     </div>

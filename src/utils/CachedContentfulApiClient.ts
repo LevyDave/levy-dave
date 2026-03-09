@@ -1,12 +1,14 @@
 import {localStorageClient} from "./LocalStorageClient.js";
 import {contentfulApiClient} from "./ContentfulApiClient.js";
+import {ContentfulApiClientPort} from "../types";
 
-class CachedContentfulApiClient {
-    constructor(baseApiClient) {
-        this.baseApiClient = baseApiClient;
+class CachedContentfulApiClient implements ContentfulApiClientPort {
+    constructor(
+        private readonly baseApiClient: ContentfulApiClientPort
+    ) {
     }
 
-    async getSpaceEntriesByType(contentType) {
+    async getSpaceEntriesByType(contentType: string) {
         const cacheKey = `cachedContentfulApiClient-getSpaceEntriesByType-${contentType}`;
 
         const cachedResult = localStorageClient.get(cacheKey);

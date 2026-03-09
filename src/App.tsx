@@ -1,7 +1,7 @@
 import {Routes, Route, HashRouter, Navigate} from "react-router-dom"
 import Home from "./pages/Home"
 import Album from "./pages/Album"
-import CenteredLayout from "./components/CenteredLayout.jsx";
+import CenteredLayout from "./components/CenteredLayout";
 import {useAsync} from "react-use";
 import {contentRepository} from "./utils/ApiContentRepository.js";
 
@@ -11,7 +11,7 @@ export default function App() {
         return contentRepository.getPageData();
     }, [])
 
-    if (pageDataRequest.loading === true) {
+    if (pageDataRequest.loading) {
         return <></>;
     }
 

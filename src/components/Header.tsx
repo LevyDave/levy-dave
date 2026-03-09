@@ -1,12 +1,19 @@
 import {useLocation, useNavigate} from "react-router-dom";
-import LanguageSelector from "./LanguageSelector.jsx";
+import LanguageSelector from "./LanguageSelector";
+import {Language} from "../types";
 
-export default function Header({languageIso, logoSrc, languages}) {
+type Props = {
+    languageIso: string,
+    logoSrc: string,
+    languages: Language[]
+}
+
+export default function Header(props: Props) {
 
     const navigate = useNavigate();
     const location = useLocation();
 
-    const onLanguageChange = (newIso) => {
+    const onLanguageChange = (newIso: string) => {
         const currentPath = location.pathname.split('/').slice(2).join('/');
 
         navigate(`/${newIso}/${currentPath}`);
@@ -20,7 +27,7 @@ export default function Header({languageIso, logoSrc, languages}) {
             <div>
                 <a href={"https://linktr.ee/levydave"}>
                     <img
-                        src={logoSrc}
+                        src={props.logoSrc}
                         alt="Levy Dave"
                         className="h-10 w-auto object-contain"
                     />
@@ -28,7 +35,7 @@ export default function Header({languageIso, logoSrc, languages}) {
             </div>
 
             <div className={"flex-grow flex justify-end"}>
-                <LanguageSelector languages={languages} onSelect={onLanguageChange} initialValue={languageIso}/>
+                <LanguageSelector languages={props.languages} onSelect={onLanguageChange} initialValue={props.languageIso}/>
             </div>
 
         </header>

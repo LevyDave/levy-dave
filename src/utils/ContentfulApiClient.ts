@@ -1,13 +1,13 @@
 class ContentfulApiClient {
-    constructor(environment, baseUrl, spaceId, token) {
-        this.environment = environment;
-        this.baseUrl = baseUrl;
-        this.spaceId = spaceId;
-        this.token = token;
+    constructor(
+        private readonly environment: string,
+        private readonly baseUrl: string,
+        private readonly spaceId: string,
+        private readonly token: string
+    ) {
     }
 
-
-    async getSpaceEntriesByType(contentType) {
+    async getSpaceEntriesByType(contentType: string) {
         return await this.makeRequest(
             'GET',
             `/spaces/${this.spaceId}/environments/${this.environment}/entries?access_token=${this.token}&content_type=${contentType}&locale=*`,
@@ -21,7 +21,7 @@ class ContentfulApiClient {
         )
     }
 
-    async makeRequest(method, url) {
+    private async makeRequest(method: string, url: string) {
         const response = await fetch(
             this.baseUrl+url,
             {
