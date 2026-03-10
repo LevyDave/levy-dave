@@ -1,32 +1,19 @@
-import {get, set} from 'idb-keyval';
-import {AssetCachePort} from "../types";
+import { IdbStorage } from "./IdbStorage";
 
-class AssetCache implements AssetCachePort {
+export class AssetCache {
+	private readonly storage: IdbStorage;
 
-    async fetchAndStore(url: string) {
-        const existing = await this.retrieveBase64Src(url);
+	constructor() {
+		this.storage = new IdbStorage("asset");
+	}
 
-        if (existing) {
-            return;
-        }
+	async store(url: string, data: string) {
+		await this.storage.store(url, data);
+	}
 
-        const response = await fetch(url);
-        const buffer = await response.arrayBuffer();
-
-        const contentType = response.headers.get('content-type');
-
-        const base64String = btoa(
-            new Uint8Array(buffer).reduce((data, byte) => data + String.fromCharCode(byte), '')
-        );
-
-        const src = `data:${contentType};base64,${base64String}`;
-
-        await set(url, src);
-    }
-
-    async retrieveBase64Src(url: string): Promise<string | null> {
-        return (await get(url)) ?? null;
-    }
+	async retrieve(url: string): Promise<string | null> {
+		return await this.storage.retrieve(url);
+	}
 }
 
 export const assetCache = new AssetCache();

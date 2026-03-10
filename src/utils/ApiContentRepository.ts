@@ -1,141 +1,199 @@
 // @ts-nocheck
-import {documentToHtmlString} from '@contentful/rich-text-html-renderer';
-import {cachedContentfulApiClient} from "./CachedContentfulApiClient.js";
-import {assetCache} from "./AssetCache.js";
-import {Album, AssetCachePort, Config, ContentfulApiClientPort, Language, PageData, Translations} from "../types";
+import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
+import type { Album, Config, Language, PageData, Translations } from "../types";
+import { type AssetCache, assetCache } from "./AssetCache.js";
+import {
+	type CachedContentfulApiClient,
+	cachedContentfulApiClient,
+} from "./CachedContentfulApiClient.js";
+
+type AssetData = {
+	contentType: string;
+	base64: string;
+};
 
 class ApiContentRepository {
+	constructor(
+		private readonly contentfulApiClient: CachedContentfulApiClient,
+		private readonly assetCache: AssetCache,
+	) {}
 
-    constructor(
-        private readonly contentfulApiClient: ContentfulApiClientPort,
-        private readonly assetCache: AssetCachePort
-    ) {
-    }
+	async getPageData(): Promise<PageData> {
+		const [albums, config, translations, languages] = await Promise.all([
+			this.getAlbums(),
+			this.getConfig(),
+			this.getTranslations(),
+			this.getLanguages(),
+		]);
 
-    async getPageData(): Promise<PageData> {
-        const [albums, config, translations, languages] = await Promise.all([
-            this.getAlbums(),
-            this.getConfig(),
-            this.getTranslations(),
-            this.getLanguages()
-        ])
+		return {
+			albums,
+			config,
+			translations,
+			languages,
+		} as PageData;
+	}
 
-        return {
-            albums,
-            config,
-            translations,
-            languages
-        } as PageData
-    }
+	async getAlbums(): Promise<Album[]> {
+		const response =
+			await this.contentfulApiClient.getSpaceEntriesByType("album");
 
-    async getAlbums(): Promise<Album[]> {
-        const response = await this.contentfulApiClient.getSpaceEntriesByType('album');
+		const items = response.items;
 
-        const items = response.items;
+		const assetToUrlMap = this.buildAssetIdToUrlMapFromIncludes(
+			response.includes.Asset,
+		);
 
-        const assetToUrlMap = this.buildAssetIdToUrlMapFromIncludes(response.includes.Asset);
+		for (const assetUrl of assetToUrlMap.values()) {
+			const assetData = await this.fetchAsset(assetUrl);
 
-        for (const assetUrl of assetToUrlMap.values()) {
-            await this.assetCache.fetchAndStore(assetUrl);
-        }
+			const assetSource = this.buildBase64Source(assetData);
 
-        const albums: Album[] = [];
-        for (const item of items) {
-            albums.push(await this.createAlbumFromItem(item, assetToUrlMap));
-        }
+			await this.assetCache.store(assetUrl, assetSource);
+		}
 
-        return albums;
-    }
+		const albums: Album[] = [];
+		for (const item of items) {
+			albums.push(await this.createAlbumFromItem(item, assetToUrlMap));
+		}
 
-    async getConfig(): Promise<Config> {
-        const response = await this.contentfulApiClient.getSpaceEntriesByType('pageConfig');
+		return albums;
+	}
 
-        const firstItem = response.items[0];
+	async getConfig(): Promise<Config> {
+		const response =
+			await this.contentfulApiClient.getSpaceEntriesByType("pageConfig");
 
-        const assetToUrlMap = this.buildAssetIdToUrlMapFromIncludes(response.includes.Asset);
+		const firstItem = response.items[0];
 
-        const logoUrl = assetToUrlMap.get(firstItem.fields.logo.en.sys.id);
+		const assetToUrlMap = this.buildAssetIdToUrlMapFromIncludes(
+			response.includes.Asset,
+		);
 
-        await this.assetCache.fetchAndStore(logoUrl);
+		const logoUrl = assetToUrlMap.get(firstItem.fields.logo.en.sys.id);
 
-        const logoSrc = await this.assetCache.retrieveBase64Src(logoUrl);
+		const logoAssetData = await this.fetchAsset(logoUrl);
 
-        return {
-            purchaseFormUrl: firstItem.fields.purchaseFormUrl.en,
-            logoSrc: logoSrc
-        } as Config;
-    }
+		const logoSource = this.buildBase64Source(logoAssetData);
 
-    async getTranslations(): Promise<Translations> {
-        const response = await this.contentfulApiClient.getSpaceEntriesByType('pageTranslations');
+		await this.assetCache.store(logoUrl, logoSource);
 
-        const firstItem = response.items[0];
+		return {
+			purchaseFormUrl: firstItem.fields.purchaseFormUrl.en,
+			logoSource: logoSource,
+		};
+	}
 
-        return {
-            tracks: this.mapLanguageEntry(firstItem.fields.tracks, ({value}) => value),
-            backButton: this.mapLanguageEntry(firstItem.fields.back, ({value}) => value),
-            orderButton: this.mapLanguageEntry(firstItem.fields.orderButton, ({value}) => value),
-        } as Translations;
-    }
+	async getTranslations(): Promise<Translations> {
+		const response =
+			await this.contentfulApiClient.getSpaceEntriesByType("pageTranslations");
 
-    async getLanguages(): Promise<Language[]> {
-        const response = await this.contentfulApiClient.getSpace();
+		const firstItem = response.items[0];
 
-        const locales = response.locales as Record<string, string>[];
+		return {
+			tracks: this.mapLanguageEntry(
+				firstItem.fields.tracks,
+				({ value }) => value,
+			),
+			backButton: this.mapLanguageEntry(
+				firstItem.fields.back,
+				({ value }) => value,
+			),
+			orderButton: this.mapLanguageEntry(
+				firstItem.fields.orderButton,
+				({ value }) => value,
+			),
+		} as Translations;
+	}
 
-        return locales.map((locale) => ({
-            iso: locale.code,
-            name: locale.name
-        })) as Language[];
-    }
+	async getLanguages(): Promise<Language[]> {
+		const response = await this.contentfulApiClient.getSpace();
 
-    async createAlbumFromItem(item: object, assetToUrlMap: Map<string, string>): Promise<Album> {
+		const locales = response.locales as Record<string, string>[];
 
-        const coverUrl = assetToUrlMap.get(item.fields.cover.en.sys.id);
+		return locales.map((locale) => ({
+			iso: locale.code,
+			name: locale.name,
+		})) as Language[];
+	}
 
-        if (!coverUrl) {
-            throw new Error('Could not find cover entry');
-        }
+	async createAlbumFromItem(
+		item: object,
+		assetToUrlMap: Map<string, string>,
+	): Promise<Album> {
+		const coverUrl = assetToUrlMap.get(item.fields.cover.en.sys.id);
 
-        const coverSrc = await assetCache.retrieveBase64Src(coverUrl)
+		if (!coverUrl) {
+			throw new Error("Could not find cover entry");
+		}
 
-        return {
-            id: item.fields.id.en,
-            title: item.fields.title.en,
-            description: this.mapLanguageEntry(item.fields.description, ({value}) => documentToHtmlString(value)),
-            coverSrc: coverSrc,
-            isAvailableForPurchase: item.fields.isAvailableForOrder.en,
-            tracks: item.fields.tracks.en.map((name: string) => ({
-                name
-            }))
-        } as Album;
-    }
+		const coverSource = await assetCache.retrieve(coverUrl);
 
-    mapLanguageEntry(languageEntry: Record<string, unknown>, callable: (data: {
-        languageIso: string,
-        value: unknown
-    }) => unknown) {
-        return Object.fromEntries(
-            Object.entries(languageEntry).map(([languageIso, value]) => [languageIso, callable({languageIso, value})])
-        );
-    }
+		return {
+			id: item.fields.id.en,
+			title: item.fields.title.en,
+			description: this.mapLanguageEntry(item.fields.description, ({ value }) =>
+				documentToHtmlString(value),
+			),
+			coverSource: coverSource,
+			isAvailableForPurchase: item.fields.isAvailableForOrder.en,
+			tracks: item.fields.tracks.en.map((name: string) => ({
+				name,
+			})),
+		} as Album;
+	}
 
-    buildAssetIdToUrlMapFromIncludes(assets: object[]) {
-        const result = new Map();
+	mapLanguageEntry(
+		languageEntry: Record<string, unknown>,
+		callable: (data: { languageIso: string; value: unknown }) => unknown,
+	) {
+		return Object.fromEntries(
+			Object.entries(languageEntry).map(([languageIso, value]) => [
+				languageIso,
+				callable({ languageIso, value }),
+			]),
+		);
+	}
 
-        for (const asset of assets) {
-            result.set(
-                asset.sys.id,
-                asset.fields.file.en.url
-            )
-        }
+	buildAssetIdToUrlMapFromIncludes(assets: object[]) {
+		const result = new Map();
 
-        return result;
+		for (const asset of assets) {
+			result.set(asset.sys.id, asset.fields.file.en.url);
+		}
 
-    }
+		return result;
+	}
+
+	private async fetchAsset(url: string): Promise<AssetData> {
+		const response = await fetch(url);
+		const buffer = await response.arrayBuffer();
+
+		const contentType = response.headers.get("content-type");
+
+		if (!contentType) {
+			throw new Error("Could not find content-type");
+		}
+
+		const base64 = btoa(
+			new Uint8Array(buffer).reduce(
+				(data, byte) => data + String.fromCharCode(byte),
+				"",
+			),
+		);
+
+		return {
+			contentType,
+			base64,
+		};
+	}
+
+	private buildBase64Source(assetData: AssetData): string {
+		return `data:${assetData.contentType};base64,${assetData.base64}`;
+	}
 }
 
 export const contentRepository = new ApiContentRepository(
-    cachedContentfulApiClient,
-    assetCache
+	cachedContentfulApiClient,
+	assetCache,
 );

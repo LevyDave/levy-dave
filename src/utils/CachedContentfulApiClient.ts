@@ -1,46 +1,49 @@
-import {localStorageClient} from "./LocalStorageClient.js";
-import {contentfulApiClient} from "./ContentfulApiClient.js";
-import {ContentfulApiClientPort} from "../types";
+import {
+	type ContentfulApiClient,
+	contentfulApiClient,
+} from "./ContentfulApiClient.js";
+import { IdbStorage } from "./IdbStorage";
 
-class CachedContentfulApiClient implements ContentfulApiClientPort {
-    constructor(
-        private readonly baseApiClient: ContentfulApiClientPort
-    ) {
-    }
+export class CachedContentfulApiClient {
+	private storage: IdbStorage;
 
-    async getSpaceEntriesByType(contentType: string) {
-        const cacheKey = `cachedContentfulApiClient-getSpaceEntriesByType-${contentType}`;
+	constructor(private readonly baseApiClient: ContentfulApiClient) {
+		this.storage = new IdbStorage("cachedContentfulApiClient");
+	}
 
-        const cachedResult = localStorageClient.get(cacheKey);
+	async getSpaceEntriesByType(contentType: string) {
+		const cacheKey = `getSpaceEntriesByType-${contentType}`;
 
-        if (cachedResult) {
-            return cachedResult;
-        }
+		const cachedResult = await this.storage.retrieve(cacheKey);
 
-        const result = await this.baseApiClient.getSpaceEntriesByType(contentType);
+		if (cachedResult) {
+			return JSON.parse(cachedResult);
+		}
 
-        localStorageClient.persist(cacheKey, result, 3600);
+		const result = await this.baseApiClient.getSpaceEntriesByType(contentType);
 
-        return result;
-    }
+		await this.storage.store(cacheKey, JSON.stringify(result), 3600);
 
-    async getSpace() {
-        const cacheKey = `cachedContentfulApiClient-getSpace`;
+		return result;
+	}
 
-        const cachedResult = localStorageClient.get(cacheKey);
+	async getSpace() {
+		const cacheKey = "getSpace";
 
-        if (cachedResult) {
-            return cachedResult;
-        }
+		const cachedResult = await this.storage.retrieve(cacheKey);
 
-        const result = await this.baseApiClient.getSpace();
+		if (cachedResult) {
+			return JSON.parse(cachedResult);
+		}
 
-        localStorageClient.persist(cacheKey, result, 3600);
+		const result = await this.baseApiClient.getSpace();
 
-        return result;
-    }
+		await this.storage.store(cacheKey, JSON.stringify(result), 3600);
+
+		return result;
+	}
 }
 
 export const cachedContentfulApiClient = new CachedContentfulApiClient(
-    contentfulApiClient
-)
+	contentfulApiClient,
+);
