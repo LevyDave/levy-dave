@@ -11,7 +11,7 @@ export default function Home(props: Props) {
 
 	return (
 		<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-			{props.pageData.albums.map((album) => (
+			{props.pageData.config.albums.map((album) => (
 				<AlbumCard key={album.id} album={album} languageIso={languageIso} />
 			))}
 		</div>

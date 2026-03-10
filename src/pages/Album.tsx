@@ -10,7 +10,7 @@ type Props = {
 export default function Album(props: Props) {
 	const { languageIso, id } = useParams() as RouteParams;
 
-	const album = props.pageData.albums.find((a) => a.id === id);
+	const album = props.pageData.config.albums.find((a) => a.id === id);
 
 	if (!album) {
 		return;

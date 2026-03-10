@@ -12,6 +12,7 @@ export type Album = {
 export type Config = {
 	purchaseFormUrl: string;
 	logoSource: string;
+	albums: Album[];
 };
 
 export type Translations = {
@@ -28,7 +29,6 @@ export type Language = {
 export type PageData = {
 	translations: Translations;
 	config: Config;
-	albums: Album[];
 	languages: Language[];
 };
 
