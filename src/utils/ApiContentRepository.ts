@@ -130,6 +130,7 @@ class ApiContentRepository {
 			tracks: item.fields.tracks.en.map((name: string) => ({
 				name,
 			})),
+			releaseDate: new Date()
 		};
 	}
 

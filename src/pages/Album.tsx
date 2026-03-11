@@ -38,7 +38,7 @@ export default function Album(props: Props) {
 				<div>
 					<h1 className="text-2xl mb-4">{album.title}</h1>
 					<div
-						className="text-lg text-white/70 leading-relaxed mb-6"
+						className="text-lg leading-relaxed mb-6"
 						dangerouslySetInnerHTML={{ __html: album.description[languageIso] }}
 					/>
 					{album.tracks.length && (
@@ -46,9 +46,7 @@ export default function Album(props: Props) {
 							<h3 className="text-xl mb-2">Tracks</h3>
 							<ol className="list-decimal list-inside mb-12 text-lg">
 								{album.tracks.map((track) => (
-									<li key={track.name} className="text-white/70">
-										{track.name}
-									</li>
+									<li key={track.name}>{track.name}</li>
 								))}
 							</ol>
 						</>

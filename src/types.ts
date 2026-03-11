@@ -7,6 +7,7 @@ export type Album = {
 	tracks: {
 		name: string;
 	}[];
+	releaseDate: Date;
 };
 
 export type Config = {

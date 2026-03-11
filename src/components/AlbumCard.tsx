@@ -10,22 +10,13 @@ type Props = {
 export default function AlbumCard(props: Props) {
 	return (
 		<Link to={`/${props.languageIso}/album/${props.album.id}`}>
-			<motion.div
-				whileHover={{ scale: 1.04 }}
-				className="relative group cursor-pointer"
-			>
-				<div className="w-full aspect-square flex items-center justify-center p-6">
-					<img
-						src={props.album.coverSource}
-						alt={props.album.title}
-						className="max-h-full max-w-full object-contain transition duration-500 group-hover:scale-105"
-					/>
-				</div>
-
-				<div className="absolute inset-0 flex items-center justify-center bg-black/80 opacity-0 group-hover:opacity-100 transition">
-					<h2 className="text-2xl tracking-wide">{props.album.title}</h2>
-				</div>
-			</motion.div>
+			<div className="w-full aspect-square flex items-center justify-center">
+				<img
+					src={props.album.coverSource}
+					alt={props.album.title}
+					className="max-h-full max-w-full object-contain transition"
+				/>
+			</div>
 		</Link>
 	);
 }

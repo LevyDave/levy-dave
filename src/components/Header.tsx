@@ -19,11 +19,11 @@ export default function Header(props: Props) {
 	};
 
 	return (
-		<header className="flex justify-center p-5 border-b border-white/10">
-			<div className={"flex-grow"}></div>
+		<header className="grid grid-cols-3 items-center p-5 shadow-lg">
+			<div className="flex justify-start"></div>
 
-			<div>
-				<a href={"https://linktr.ee/levydave"}>
+			<div className="flex justify-center">
+				<a href="https://linktr.ee/levydave">
 					<img
 						src={props.logoSrc}
 						alt="Levy Dave"
@@ -32,7 +32,7 @@ export default function Header(props: Props) {
 				</a>
 			</div>
 
-			<div className={"flex-grow flex justify-end"}>
+			<div className="flex justify-end">
 				<LanguageSelector
 					languages={props.languages}
 					onSelect={onLanguageChange}
