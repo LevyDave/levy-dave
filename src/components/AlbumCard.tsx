@@ -12,7 +12,7 @@ export default function AlbumCard(props: Props) {
 		<Link to={`/${props.languageIso}/album/${props.album.id}`}>
 			<motion.div
 				whileHover={{ scale: 1.04 }}
-				className="relative group cursor-pointer bg-black"
+				className="relative group cursor-pointer"
 			>
 				<div className="w-full aspect-square flex items-center justify-center p-6">
 					<img

@@ -10,7 +10,7 @@ export default function CenteredLayout(props: Props) {
 	const { languageIso } = useParams() as RouteParams;
 
 	return (
-		<div className="min-h-screen bg-black text-white">
+		<div className="min-h-screen">
 			<Header
 				languageIso={languageIso}
 				logoSrc={props.pageData.config.logoSource}

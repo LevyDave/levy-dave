@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
-body {
-	background: black;
-	color: white;
-	font-family: system-ui, sans-serif;
+@layer base {
+	body {
+		background-color: var(--color-black);
+		color: var(--color-white);
+	}
 }
