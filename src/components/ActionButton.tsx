@@ -12,7 +12,7 @@ type Props = {
 const variantStyles: Record<variants, { classes: string }> = {
 	primary: {
 		classes:
-			"bg-orange-500 text-white hover:bg-orange-600 focus:bg-orange-600 active:bg-orange-700",
+			"bg-brand-400 text-white hover:bg-brand-500 focus:bg-brand-500 active:bg-brand-500",
 	},
 	ghost: {
 		classes:

@@ -1,6 +1,7 @@
-import { motion } from "framer-motion";
 import { useParams } from "react-router-dom";
-import ActionButton from "../components/ActionButton";
+import Button from "../components/Button";
+import PageSectionHeader from "../components/PageSectionHeader";
+import PageSectionNarrow from "../components/PageSectionNarrow";
 import type { PageData, RouteParams } from "../types";
 
 type Props = {
@@ -8,7 +9,7 @@ type Props = {
 };
 
 export default function Album(props: Props) {
-	const { languageIso, id } = useParams() as RouteParams;
+	const { id, languageIso } = useParams() as RouteParams;
 
 	const album = props.pageData.config.albums.find((a) => a.id === id);
 
@@ -17,52 +18,48 @@ export default function Album(props: Props) {
 	}
 
 	return (
-		<div>
-			<div className="mb-6">
-				<ActionButton
-					text={props.pageData.translations.back[languageIso]}
-					linkUrl={`/${languageIso}`}
-					variant={"ghost"}
-					isDisabled={false}
-				/>
-			</div>
-			<div className="grid grid-cold-1 md:grid-cols-2 gap-8">
-				<div>
-					<motion.img
-						initial={{ opacity: 0, scale: 0.95 }}
-						animate={{ opacity: 1, scale: 1 }}
-						src={album.coverSource}
-						className="w-full mb-10"
-					/>
-				</div>
-				<div>
-					<h1 className="text-2xl mb-4">{album.title}</h1>
-					<div
-						className="text-lg text-white/70 leading-relaxed mb-6"
-						dangerouslySetInnerHTML={{ __html: album.description[languageIso] }}
-					/>
-					{album.tracks.length && (
-						<>
-							<h3 className="text-xl mb-2">Tracks</h3>
-							<ol className="list-decimal list-inside mb-12 text-lg">
-								{album.tracks.map((track) => (
-									<li key={track.name} className="text-white/70">
-										{track.name}
-									</li>
-								))}
-							</ol>
-						</>
-					)}
-					<div>
-						<ActionButton
-							text={props.pageData.translations.orderButton[languageIso]}
-							linkUrl={props.pageData.config.purchaseFormUrl}
-							variant={"primary"}
-							isDisabled={!album.isAvailableForPurchase}
+		<>
+			<PageSectionHeader title={album.title} />
+
+			<PageSectionNarrow>
+				<div className="grid grid-cols-1 md:grid-cols-5 gap-12">
+					<div className="col-span-2">
+						<img
+							src={album.coverSource}
+							alt={album.title}
+							className="max-h-full max-w-full object-contain rounded-lg"
 						/>
 					</div>
+					<div className="col-span-3">
+						<div
+							className="text-xl font-light"
+							dangerouslySetInnerHTML={{
+								__html: album.description[languageIso],
+							}}
+						/>
+						<div className="text-lg font-light">
+							{props.pageData.translations.tracks[languageIso]}
+						</div>
+
+						{album.tracks.length && (
+							<ol className="list-decimal list-inside">
+								{album.tracks.map((track) => (
+									<li key={track.name}>{track.name}</li>
+								))}
+							</ol>
+						)}
+						<div>
+							<Button
+								text={props.pageData.translations.orderButton[languageIso]}
+								size={"medium"}
+								variant={"primary"}
+								color={"brand"}
+								to={props.pageData.config.purchaseFormUrl}
+							/>
+						</div>
+					</div>
 				</div>
-			</div>
-		</div>
+			</PageSectionNarrow>
+		</>
 	);
 }

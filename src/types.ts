@@ -7,6 +7,7 @@ export type Album = {
 	tracks: {
 		name: string;
 	}[];
+	releaseDate: Date;
 };
 
 export type Config = {
@@ -25,7 +26,10 @@ export type Language = {
 export type PageData = {
 	translations: Translations;
 	config: Config;
-	languages: Language[];
+	languages: {
+		all: Language[];
+		default: Language;
+	};
 };
 
 export type RouteParams = {
