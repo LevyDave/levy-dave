@@ -16,8 +16,8 @@
 	--color-brand-950: oklch(0.202 0.054 49.03);
 	--background-image-brand-gradient: linear-gradient(
 		0deg,
-		var(--color-brand-800),
-		var(--color-brand-500)
+		var(--color-brand-500),
+		var(--color-brand-700)
 	);
 }
 

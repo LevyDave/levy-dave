@@ -26,7 +26,10 @@ export type Language = {
 export type PageData = {
 	translations: Translations;
 	config: Config;
-	languages: Language[];
+	languages: {
+		all: Language[];
+		default: Language;
+	};
 };
 
 export type RouteParams = {

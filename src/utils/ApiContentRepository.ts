@@ -28,7 +28,10 @@ class ApiContentRepository {
 		return {
 			config,
 			translations,
-			languages,
+			languages: {
+				all: languages,
+				default: languages[0],
+			},
 		};
 	}
 
@@ -130,7 +133,7 @@ class ApiContentRepository {
 			tracks: item.fields.tracks.en.map((name: string) => ({
 				name,
 			})),
-			releaseDate: new Date()
+			releaseDate: new Date(),
 		};
 	}
 
