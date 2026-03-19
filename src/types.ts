@@ -17,7 +17,7 @@ export interface AlbumSkeleton {
 		id: EntryFieldTypes.Text;
 		title: EntryFieldTypes.Text;
 		description: EntryFieldTypes.RichText;
-		tracks: EntryFieldTypes.Text;
+		tracks: EntryFieldTypes.Array<EntryFieldTypes.Symbol>;
 		cover: EntryFieldTypes.AssetLink;
 		isAvailableForOrder: EntryFieldTypes.Boolean;
 	};
@@ -48,9 +48,9 @@ export interface PageTranslationsSkeleton {
 export type LocalizedAlbums = EntryCollection<
 	AlbumSkeleton,
 	"WITH_ALL_LOCALES"
->["items"];
+>;
 
-export type LocalizedAlbum = LocalizedAlbums[number];
+export type LocalizedAlbum = LocalizedAlbums["items"][number];
 
 export type LocalizedPageConfig = Entry<PageConfigSkeleton, "WITH_ALL_LOCALES">;
 
@@ -70,7 +70,7 @@ export interface ContentfulClient {
 }
 
 export type PageData = {
-	albums: LocalizedAlbum[];
+	albums: LocalizedAlbums;
 	pageConfig: LocalizedPageConfig;
 	pageTranslations: LocalizedPageTranslations;
 	locales: LocaleCollection;

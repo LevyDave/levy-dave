@@ -73,15 +73,11 @@ export default function Album(props: Props) {
 								)}
 							</div>
 
-							{album.fields.tracks.length && (
-								<ol className="list-decimal list-inside text-xl">
-									{getTranslationValue(album.fields.tracks, languageIso)
-										.split(",")
-										.map((track) => (
-											<li key={track}>{track}</li>
-										))}
-								</ol>
-							)}
+							<ol className="list-decimal list-inside text-lg font-light">
+								{album.fields.tracks?.en?.map((track) => (
+									<li key={track}>{track}</li>
+								))}
+							</ol>
 						</div>
 						<div>
 							<Button
