@@ -17,14 +17,14 @@ export const getDocumentTranslation = (
 };
 
 export const getStringTranslation = (
-	translations: Record<string,string>,
+	translations: Record<string, string>,
 	languageIso: string,
 ) => {
 	const translationValue = translations[languageIso] ?? null;
 
-    if (!translationValue) {
-        return "{Bad value}";
-    }
+	if (!translationValue) {
+		return "{Bad value}";
+	}
 
 	return translationValue;
 };

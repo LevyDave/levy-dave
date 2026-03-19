@@ -2,11 +2,8 @@ import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import { useAsync } from "react-use";
 import LanguageGuard from "./components/LanguageGuard";
 import PageLayout from "./components/PageLayout";
-import About from "./pages/About";
-import Album from "./pages/Album";
-import Home from "./pages/Home";
-import {pageDataRepository} from "./services/PageDataRepository";
-import {getAssetUrl} from "./utils/contentfulValueUtil";
+import Shop from "./pages/Shop";
+import { pageDataRepository } from "./services/PageDataRepository";
 
 export default function App() {
 	const pageDataRequest = useAsync(async () => {
@@ -28,9 +25,7 @@ export default function App() {
 			<Routes>
 				<Route
 					path="/"
-					element={
-						<Navigate to={`/${pageData.defaultLocale.code}`} replace />
-					}
+					element={<Navigate to={`/${pageData.defaultLocale.code}`} replace />}
 				/>
 
 				<Route
@@ -43,7 +38,7 @@ export default function App() {
 					}
 				>
 					<Route element={<PageLayout pageData={pageData} />}>
-						<Route path="" element={<div>Abba</div>} />
+						<Route path="" element={<Shop pageData={pageData} />} />
 						<Route path="album/:id" element={<div>Abba</div>} />
 						<Route path="about" element={<div>Abba</div>} />
 					</Route>

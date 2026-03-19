@@ -1,43 +1,54 @@
-import type { Album, Translations } from "../types";
-import { getStringTranslation } from "../utils/translationUtil";
+import type { LocalizedAlbum } from "../types";
+import {
+	getAssetUrl,
+	getHtmlString,
+	getTranslationValue,
+} from "../utils/contentfulValueUtil";
 import Button from "./Button";
+import LazyImage from "./LazyImage";
 
 type Props = {
-	album: Album;
+	album: LocalizedAlbum;
 	languageIso: string;
-	translations: Translations;
+	seeButtonText: string;
 };
 
 export default function AlbumCardHorizontal(props: Props) {
 	return (
 		<div className={"grid grid-cols-1 sm:grid-cols-6"}>
 			<div className={"col-span-2"}>
-				<img
-					src={props.album.coverSource}
-					alt={props.album.title}
-					className="max-h-full max-w-full object-contain rounded-lg"
+				<LazyImage
+					url={getAssetUrl(props.album.fields.cover)}
+					alt={"Album cover"}
+					classNames={[
+						"max-h-full",
+						"max-w-full",
+						"object-contain",
+						"rounded-lg",
+					]}
 				/>
 			</div>
 			<div className={"col-span-4 py-6 sm:px-12"}>
-				<div className={"text-2xl mb-4 font-semibold"}>{props.album.title}</div>
+				<div className={"text-2xl mb-4 font-semibold"}>
+					{getTranslationValue(props.album.fields.title, "en")}
+				</div>
 				<div
 					className="text-lg font-light mb-7"
 					dangerouslySetInnerHTML={{
-						__html: props.album.description[props.languageIso],
+						__html: getHtmlString(
+							props.album.fields.description,
+							props.languageIso,
+						),
 					}}
 				/>
 
 				<Button
-					text={getStringTranslation(
-						props.translations,
-						"seeAlbum",
-						props.languageIso,
-					)}
+					text={props.seeButtonText}
 					size={"medium"}
 					variant={"primary"}
 					extraClasses={["shadow-md"]}
 					color={"brand"}
-					to={`/${props.languageIso}/album/${props.album.id}`}
+					to={`/${props.languageIso}/album/${getTranslationValue(props.album.fields.id, "en")}`}
 				/>
 			</div>
 		</div>

@@ -28,7 +28,7 @@ export default function About(props: Props) {
 				<div
 					dangerouslySetInnerHTML={{
 						__html: getDocumentTranslation(
-							props.pageData.translations['oWydawnictwie'],
+							props.pageData.translations.oWydawnictwie,
 							languageIso,
 						),
 					}}

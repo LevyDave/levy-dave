@@ -1,83 +1,80 @@
-import {contentfulClient2} from "./ContentfulClient";
-import {IdbStorage} from "./IdbStorage";
-import {ContentfulClient} from "../types";
-import {LocaleCollection} from "contentful";
+import type { LocaleCollection } from "contentful";
+import type { ContentfulClient } from "../types";
+import { contentfulClient2 } from "./ContentfulClient";
+import { IdbStorage } from "./IdbStorage";
 
 export class CachedContentfulClient implements ContentfulClient {
+	private readonly storage: IdbStorage;
 
-    private readonly storage: IdbStorage;
+	constructor(private readonly baseClient: ContentfulClient) {
+		this.storage = new IdbStorage("contentful-client2");
+	}
 
-    constructor(
-        private readonly baseClient: ContentfulClient
-    ) {
-        this.storage = new IdbStorage('contentful-client2');
-    }
+	async getAlbums() {
+		const cacheKey = `getAlbums`;
 
-    async getAlbums() {
-        const cacheKey = `getAlbums`;
+		const cachedResult = await this.storage.retrieve(cacheKey);
 
-        const cachedResult = await this.storage.retrieve(cacheKey);
+		if (cachedResult) {
+			return JSON.parse(cachedResult);
+		}
 
-        if (cachedResult) {
-            return JSON.parse(cachedResult);
-        }
+		const result = await this.baseClient.getAlbums();
 
-        const result = await this.baseClient.getAlbums();
+		await this.storage.store(cacheKey, JSON.stringify(result), 3600);
 
-        await this.storage.store(cacheKey, JSON.stringify(result), 3600);
+		return result;
+	}
 
-        return result;
-    }
+	async getPageConfig() {
+		const cacheKey = `getPageConfig`;
 
-    async getPageConfig() {
-        const cacheKey = `getPageConfig`;
+		const cachedResult = await this.storage.retrieve(cacheKey);
 
-        const cachedResult = await this.storage.retrieve(cacheKey);
+		if (cachedResult) {
+			return JSON.parse(cachedResult);
+		}
 
-        if (cachedResult) {
-            return JSON.parse(cachedResult);
-        }
+		const result = await this.baseClient.getPageConfig();
 
-        const result = await this.baseClient.getPageConfig();
+		await this.storage.store(cacheKey, JSON.stringify(result), 3600);
 
-        await this.storage.store(cacheKey, JSON.stringify(result), 3600);
+		return result;
+	}
 
-        return result;
-    }
+	async getPageTranslations() {
+		const cacheKey = `getPageTranslations`;
 
-    async getPageTranslations() {
-        const cacheKey = `getPageTranslations`;
+		const cachedResult = await this.storage.retrieve(cacheKey);
 
-        const cachedResult = await this.storage.retrieve(cacheKey);
+		if (cachedResult) {
+			return JSON.parse(cachedResult);
+		}
 
-        if (cachedResult) {
-            return JSON.parse(cachedResult);
-        }
+		const result = await this.baseClient.getPageTranslations();
 
-        const result = await this.baseClient.getPageTranslations();
+		await this.storage.store(cacheKey, JSON.stringify(result), 3600);
 
-        await this.storage.store(cacheKey, JSON.stringify(result), 3600);
+		return result;
+	}
 
-        return result;
-    }
+	async getLocales(): Promise<LocaleCollection> {
+		const cacheKey = `getLocales`;
 
-    async getLocales(): Promise<LocaleCollection> {
+		const cachedResult = await this.storage.retrieve(cacheKey);
 
-        const cacheKey = `getLocales`;
+		if (cachedResult) {
+			return JSON.parse(cachedResult);
+		}
 
-        const cachedResult = await this.storage.retrieve(cacheKey);
+		const result = await this.baseClient.getLocales();
 
-        if (cachedResult) {
-            return JSON.parse(cachedResult);
-        }
+		await this.storage.store(cacheKey, JSON.stringify(result), 3600);
 
-        const result = await this.baseClient.getLocales();
-
-        await this.storage.store(cacheKey, JSON.stringify(result), 3600);
-
-        return result;
-    }
+		return result;
+	}
 }
 
-
-export const cachedContentfulClient = new CachedContentfulClient(contentfulClient2);
+export const cachedContentfulClient = new CachedContentfulClient(
+	contentfulClient2,
+);

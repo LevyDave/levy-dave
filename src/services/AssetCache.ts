@@ -1,47 +1,41 @@
-import {IdbStorage} from "./IdbStorage";
+import { IdbStorage } from "./IdbStorage";
 
 export class AssetCache {
+	private readonly storage: IdbStorage;
 
-    private readonly storage: IdbStorage;
+	constructor() {
+		this.storage = new IdbStorage("asset");
+	}
 
-    constructor() {
-        this.storage = new IdbStorage('asset');
-    }
+	async getAssetSource(url: string): Promise<string> {
+		const cachedAssedSource = await this.storage.retrieve(url);
 
-    async getAssetSource(url: string): Promise<string>
-    {
-        const cachedAssedSource = await this.storage.retrieve(url);
+		if (cachedAssedSource) {
+			return cachedAssedSource;
+		}
 
-        if (cachedAssedSource) {
-            return cachedAssedSource;
-        }
+		const response = await fetch(url);
+		const buffer = await response.arrayBuffer();
 
-        const response = await fetch(url);
-        const buffer = await response.arrayBuffer();
+		const contentType = response.headers.get("content-type");
 
-        const contentType = response.headers.get("content-type");
+		if (!contentType) {
+			throw new Error("Could not find content-type");
+		}
 
-        if (!contentType) {
-            throw new Error("Could not find content-type");
-        }
+		const base64 = btoa(
+			new Uint8Array(buffer).reduce(
+				(data, byte) => data + String.fromCharCode(byte),
+				"",
+			),
+		);
 
-        const base64 = btoa(
-            new Uint8Array(buffer).reduce(
-                (data, byte) => data + String.fromCharCode(byte),
-                "",
-            ),
-        );
+		const assetSource = `data:${contentType};base64,${base64}`;
 
-        const assetSource = `data:${contentType};base64,${base64}`;
+		await this.storage.store(url, assetSource, 3600);
 
-        await this.storage.store(
-            url,
-            assetSource,
-            3600
-        );
-
-        return assetSource;
-    }
+		return assetSource;
+	}
 }
 
 export const assetCache = new AssetCache();

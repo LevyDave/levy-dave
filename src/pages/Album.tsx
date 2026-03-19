@@ -49,7 +49,7 @@ export default function Album(props: Props) {
 						<div
 							className="text-xl mb-6"
 							dangerouslySetInnerHTML={{
-                                    __html: album.description[languageIso],
+								__html: album.description[languageIso],
 							}}
 						/>
 						<div className={"mb-6"}>

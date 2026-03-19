@@ -1,33 +1,67 @@
-import {Asset, UnresolvedLink} from "contentful";
+import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
+import type { Document } from "@contentful/rich-text-types";
+import type { Asset, UnresolvedLink } from "contentful";
 
-type LocalizedAsset = Record<string, UnresolvedLink<"Asset"> | Asset<"WITH_ALL_LOCALES", string> | undefined>;
+type LocalizedMaybeAsset = Record<
+	string,
+	UnresolvedLink<"Asset"> | Asset<"WITH_ALL_LOCALES", string> | undefined
+>;
 
-type LocalizedTranslation = Record<string, string|undefined>
+type LocalizedTranslation = Record<string, string | undefined>;
 
-export const getAssetUrl = (localizedAsset: LocalizedAsset): string => {
-    if (!localizedAsset) {
-        return "";
-    }
+export const asLocalizedAsset = (
+	localizedMaybeAsset: LocalizedMaybeAsset,
+	languageIso: string,
+) => {
+	if (!localizedMaybeAsset) {
+		throw new Error("Not asset");
+	}
 
-    const maybeAsset = localizedAsset['en'];
+	const maybeAsset = localizedMaybeAsset[languageIso];
 
-    if (!maybeAsset) {
-        return "";
-    }
+	if (!maybeAsset) {
+		throw new Error("Not asset");
+	}
 
-    if (!('fields' in maybeAsset)) {
-        return "";
-    }
+	if (!("fields" in maybeAsset)) {
+		throw new Error("Not asset");
+	}
 
-    const assetFile = maybeAsset.fields.file?.['en'];
+	return maybeAsset;
+};
 
-    if (!assetFile) {
-        return "";
-    }
+export const getAssetUrl = (localizedAsset: LocalizedMaybeAsset): string => {
+	try {
+		const asset = asLocalizedAsset(localizedAsset, "en");
 
-    return assetFile.url;
-}
+		const assetFile = asset.fields.file?.en;
 
-export const getTranslationValue = (localizedTranslation: LocalizedTranslation, languageIso: string): string => {
-    return localizedTranslation?.[languageIso] ?? '';
-}
+		if (!assetFile) {
+			return "";
+		}
+
+		return assetFile.url;
+	} catch (_error) {
+		return "";
+	}
+};
+
+export const getTranslationValue = (
+	localizedTranslation: LocalizedTranslation,
+	languageIso: string,
+): string => {
+	return localizedTranslation?.[languageIso] ?? "";
+};
+
+export const getHtmlString = (
+	localizedDocument: Record<string, Document | undefined>,
+	languageIso: string,
+): string => {
+	const document = localizedDocument[languageIso] ?? null;
+
+	if (!document) {
+		return "";
+	}
+
+	return documentToHtmlString(document);
+};
