@@ -1,21 +1,37 @@
+import { useParams } from "react-router-dom";
 import PageSectionHeader from "../components/PageSectionHeader";
 import PageSectionNarrow from "../components/PageSectionNarrow";
-import type { PageData } from "../types";
-
-const description =
-	"Moją twórczość definiuje nieustanne poszukiwanie równowagi między surową naturą a nowoczesną formą. W swoich pracach często wykorzystuję tradycyjne techniki malarskie, łącząc je z eksperymentalnymi mediami cyfrowymi, co pozwala mi na eksplorację tematów związanych z upływem czasu i ulotnością chwili.";
+import type { PageData, RouteParams } from "../types";
+import {
+	getHtmlString,
+	getTranslationValue,
+} from "../utils/contentfulValueUtil";
 
 type Props = {
 	pageData: PageData;
 };
 
-export default function About(_props: Props) {
+export default function About(props: Props) {
+	const { languageIso } = useParams() as RouteParams;
+
 	return (
 		<>
-			<PageSectionHeader title={"O mnie"} />
+			<PageSectionHeader
+				title={getTranslationValue(
+					props.pageData.pageTranslations.fields.aboutLabel,
+					languageIso,
+				)}
+			/>
 
 			<PageSectionNarrow>
-				<div className={"text-xl text-center"}>{description}</div>
+				<div
+					dangerouslySetInnerHTML={{
+						__html: getHtmlString(
+							props.pageData.pageTranslations.fields.oWydawnictwie,
+							languageIso,
+						),
+					}}
+				/>
 			</PageSectionNarrow>
 		</>
 	);

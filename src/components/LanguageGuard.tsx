@@ -1,16 +1,17 @@
+import type { Locale, LocaleCollection } from "contentful";
 import { Navigate, Outlet, useParams } from "react-router-dom";
-import type { Language, RouteParams } from "../types";
+import type { RouteParams } from "../types";
 
 type Props = {
-	languages: Language[];
-	defaultLanguage: Language;
+	locales: LocaleCollection;
+	defaultLocale: Locale;
 };
 
 export default function LanguageGuard(props: Props) {
 	const { languageIso } = useParams() as RouteParams;
 
-	if (!props.languages.find((language) => language.iso === languageIso)) {
-		return <Navigate to={`/${props.defaultLanguage.iso}`} replace />;
+	if (!props.locales.items.find((locale) => locale.code === languageIso)) {
+		return <Navigate to={`/${props.defaultLocale.code}`} replace />;
 	}
 
 	return <Outlet />;
