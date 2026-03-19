@@ -3,9 +3,9 @@ import PageSectionHeader from "../components/PageSectionHeader";
 import PageSectionNarrow from "../components/PageSectionNarrow";
 import type { PageData, RouteParams } from "../types";
 import {
-	getDocumentTranslation,
-	getStringTranslation,
-} from "../utils/translationUtil";
+	getHtmlString,
+	getTranslationValue,
+} from "../utils/contentfulValueUtil";
 
 type Props = {
 	pageData: PageData;
@@ -17,9 +17,8 @@ export default function About(props: Props) {
 	return (
 		<>
 			<PageSectionHeader
-				title={getStringTranslation(
-					props.pageData.translations,
-					"aboutLabel",
+				title={getTranslationValue(
+					props.pageData.pageTranslations.fields.aboutLabel,
 					languageIso,
 				)}
 			/>
@@ -27,8 +26,8 @@ export default function About(props: Props) {
 			<PageSectionNarrow>
 				<div
 					dangerouslySetInnerHTML={{
-						__html: getDocumentTranslation(
-							props.pageData.translations.oWydawnictwie,
+						__html: getHtmlString(
+							props.pageData.pageTranslations.fields.oWydawnictwie,
 							languageIso,
 						),
 					}}

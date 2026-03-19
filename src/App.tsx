@@ -2,6 +2,8 @@ import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
 import { useAsync } from "react-use";
 import LanguageGuard from "./components/LanguageGuard";
 import PageLayout from "./components/PageLayout";
+import About from "./pages/About";
+import Album from "./pages/Album";
 import Shop from "./pages/Shop";
 import { pageDataRepository } from "./services/PageDataRepository";
 
@@ -39,8 +41,8 @@ export default function App() {
 				>
 					<Route element={<PageLayout pageData={pageData} />}>
 						<Route path="" element={<Shop pageData={pageData} />} />
-						<Route path="album/:id" element={<div>Abba</div>} />
-						<Route path="about" element={<div>Abba</div>} />
+						<Route path="album/:id" element={<Album pageData={pageData} />} />
+						<Route path="about" element={<About pageData={pageData} />} />
 					</Route>
 				</Route>
 			</Routes>

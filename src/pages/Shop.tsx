@@ -23,17 +23,20 @@ export default function Shop(props: Props) {
 
 			<PageSectionNarrow>
 				<div className={"grid grid-cols-1 gap-3 sm:gap-10"}>
-					{props.pageData.pageConfig.fields?.albums?.en?.map((album) => (
-						<AlbumCardHorizontal
-							key={album?.sys.id}
-							album={album}
-							languageIso={languageIso}
-							seeButtonText={getTranslationValue(
-								props.pageData.pageTranslations.fields.seeAlbum,
-								languageIso,
-							)}
-						/>
-					))}
+					{props.pageData.pageConfig.fields?.albums?.en?.map(
+						(album) =>
+							"fields" in album && (
+								<AlbumCardHorizontal
+									key={album?.sys.id}
+									album={album}
+									languageIso={languageIso}
+									seeButtonText={getTranslationValue(
+										props.pageData.pageTranslations.fields.seeAlbum,
+										languageIso,
+									)}
+								/>
+							),
+					)}
 				</div>
 			</PageSectionNarrow>
 		</>

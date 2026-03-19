@@ -49,21 +49,30 @@ export type LocalizedAlbums = EntryCollection<
 	AlbumSkeleton,
 	"WITH_ALL_LOCALES"
 >["items"];
+
 export type LocalizedAlbum = LocalizedAlbums[number];
 
+export type LocalizedPageConfig = Entry<PageConfigSkeleton, "WITH_ALL_LOCALES">;
+
+export type LocalizedPageTranslations = Entry<
+	PageTranslationsSkeleton,
+	"WITH_ALL_LOCALES"
+>;
+
 export interface ContentfulClient {
-	getAlbums(): Promise<EntryCollection<AlbumSkeleton, "WITH_ALL_LOCALES">>;
-	getPageConfig(): Promise<Entry<PageConfigSkeleton, "WITH_ALL_LOCALES">>;
-	getPageTranslations(): Promise<
-		Entry<PageTranslationsSkeleton, "WITH_ALL_LOCALES">
-	>;
+	getAlbums(): Promise<LocalizedAlbums>;
+
+	getPageConfig(): Promise<LocalizedPageConfig>;
+
+	getPageTranslations(): Promise<LocalizedPageTranslations>;
+
 	getLocales(): Promise<LocaleCollection>;
 }
 
 export type PageData = {
-	albums: EntryCollection<AlbumSkeleton, "WITH_ALL_LOCALES">;
-	pageConfig: Entry<PageConfigSkeleton, "WITH_ALL_LOCALES">;
-	pageTranslations: Entry<PageTranslationsSkeleton, "WITH_ALL_LOCALES">;
+	albums: LocalizedAlbum[];
+	pageConfig: LocalizedPageConfig;
+	pageTranslations: LocalizedPageTranslations;
 	locales: LocaleCollection;
 	defaultLocale: Locale;
 };
