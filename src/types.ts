@@ -20,6 +20,7 @@ export interface AlbumSkeleton {
 		tracks: EntryFieldTypes.Array<EntryFieldTypes.Symbol>;
 		cover: EntryFieldTypes.AssetLink;
 		isAvailableForOrder: EntryFieldTypes.Boolean;
+		images: EntryFieldTypes.Array<EntryFieldTypes.AssetLink>;
 	};
 }
 

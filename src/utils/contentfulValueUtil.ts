@@ -1,6 +1,7 @@
 import { documentToHtmlString } from "@contentful/rich-text-html-renderer";
 import type { Document } from "@contentful/rich-text-types";
 import type { Asset, UnresolvedLink } from "contentful";
+import type { LocalizedAlbum } from "../types";
 
 type LocalizedMaybeAsset = Record<
 	string,
@@ -64,4 +65,54 @@ export const getHtmlString = (
 	}
 
 	return documentToHtmlString(document);
+};
+
+export const getAlbumImages = (album: LocalizedAlbum) => {
+	const images: { url: string; alt: string }[] = [];
+
+	const coverAsset = asLocalizedAsset(album.fields.cover, "en");
+
+	const coverFile = coverAsset.fields.file?.en;
+
+	const coverUrl = coverFile?.url;
+
+	if (!coverUrl) {
+		return images;
+	}
+
+	images.push({
+		url: coverUrl,
+		alt: coverFile?.fileName ?? "",
+	});
+
+	const imagesField = album.fields.images?.en;
+
+	if (!imagesField) {
+		return images;
+	}
+
+	for (const image of imagesField) {
+		if (!("fields" in image)) {
+			continue;
+		}
+
+		const imageFile = image.fields.file?.en;
+
+		if (!imageFile) {
+			continue;
+		}
+
+		const fileUrl = imageFile?.url;
+
+		if (!fileUrl) {
+			continue;
+		}
+
+		images.push({
+			url: fileUrl,
+			alt: imageFile?.fileName ?? "",
+		});
+	}
+
+	return images;
 };

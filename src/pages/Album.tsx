@@ -1,11 +1,11 @@
 import { useParams } from "react-router-dom";
 import Button from "../components/Button";
-import LazyImage from "../components/LazyImage";
 import PageSectionHeader from "../components/PageSectionHeader";
 import PageSectionNarrow from "../components/PageSectionNarrow";
+import PhotoGallery from "../components/PhotoGallery";
 import type { PageData, RouteParams } from "../types";
 import {
-	getAssetUrl,
+	getAlbumImages,
 	getHtmlString,
 	getTranslationValue,
 } from "../utils/contentfulValueUtil";
@@ -47,16 +47,7 @@ export default function Album(props: Props) {
 
 				<div className="grid grid-cols-1 md:grid-cols-5 gap-12">
 					<div className="col-span-2">
-						<LazyImage
-							url={getAssetUrl(album.fields.cover)}
-							alt={getTranslationValue(album.fields.title, languageIso)}
-							classNames={[
-								"max-h-full",
-								"max-w-full",
-								"object-contain",
-								"rounded-lg",
-							]}
-						/>
+						<PhotoGallery images={getAlbumImages(album)} />
 					</div>
 					<div className="col-span-3">
 						<div
