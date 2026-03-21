@@ -16,6 +16,8 @@ export interface AlbumSkeleton {
 	fields: {
 		id: EntryFieldTypes.Text;
 		title: EntryFieldTypes.Text;
+		pagelink: EntryFieldTypes.Text;
+		artistname: EntryFieldTypes.Text;
 		description: EntryFieldTypes.RichText;
 		tracks: EntryFieldTypes.Array<EntryFieldTypes.Symbol>;
 		cover: EntryFieldTypes.AssetLink;
@@ -43,6 +45,7 @@ export interface PageTranslationsSkeleton {
 		aboutLabel: EntryFieldTypes.Text;
 		shop: EntryFieldTypes.Text;
 		oWydawnictwie: EntryFieldTypes.RichText;
+		pagelink: EntryFieldTypes.Text;
 	};
 }
 

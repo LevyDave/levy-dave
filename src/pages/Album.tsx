@@ -28,7 +28,7 @@ export default function Album(props: Props) {
 	return (
 		<>
 			<PageSectionHeader
-				title={getTranslationValue(album.fields.title, "en")}
+				title={getTranslationValue(album.fields.artistname, "en")}
 			/>
 
 			<PageSectionNarrow>
@@ -50,14 +50,17 @@ export default function Album(props: Props) {
 						<PhotoGallery images={getAlbumImages(album)} />
 					</div>
 					<div className="col-span-3">
+						<div className={"text-2xl mb-6 font-semibold"}>
+							{getTranslationValue(album.fields.title, "en")}
+						</div>
 						<div
-							className="text-xl mb-6"
+							className="text-lg mb-4"
 							dangerouslySetInnerHTML={{
 								__html: getHtmlString(album.fields.description, languageIso),
 							}}
 						/>
 						<div className={"mb-6"}>
-							<div className="text-xl mb-2">
+							<div className="text-lg mb-2">
 								{getTranslationValue(
 									props.pageData.pageTranslations.fields.tracks,
 									languageIso,
@@ -70,7 +73,7 @@ export default function Album(props: Props) {
 								))}
 							</ol>
 						</div>
-						<div>
+						<div className={"flex gap-3"}>
 							<Button
 								text={getTranslationValue(
 									props.pageData.pageTranslations.fields.orderButton,
@@ -81,8 +84,18 @@ export default function Album(props: Props) {
 								color={"brand"}
 								to={getTranslationValue(
 									props.pageData.pageConfig.fields.purchaseFormUrl,
-									"en",
+									languageIso,
 								)}
+							/>
+							<Button
+								text={getTranslationValue(
+									props.pageData.pageTranslations.fields.pagelink,
+									languageIso,
+								)}
+								size={"medium"}
+								variant={"ghost"}
+								color={"brand"}
+								to={album.fields.pagelink?.en}
 							/>
 						</div>
 					</div>
