@@ -77,11 +77,9 @@ export class Product {
 		const cover = this.getCover();
 		const images = this.getImages();
 
-		if (cover) {
-			images.push(cover);
-		}
+		const galleryImages = [...(cover ? [cover] : []), ...images];
 
-		return images.map((image) => ({
+		return galleryImages.map((image) => ({
 			url: image.url,
 			alt: image.fileName,
 		}));
@@ -101,7 +99,13 @@ export class Product {
 		return this.base.fields.seeMoreLink?.pl;
 	}
 
-	getOrderLink() {
-		return this.base.fields.orderLink?.pl;
+	getOrderLink(languageIso: string) {
+		const rawOrderLink = this.base.fields.orderLink;
+
+		if (!rawOrderLink) {
+			return null;
+		}
+
+		return getTranslationValue(rawOrderLink, languageIso);
 	}
 }

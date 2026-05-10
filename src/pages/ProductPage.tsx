@@ -24,6 +24,7 @@ export default function ProductPage(props: Props) {
 
 	const longDescription = product.getLongDescription(languageIso);
 	const subtype = product.getSubtype();
+	const orderLink = product.getOrderLink(languageIso);
 
 	return (
 		<>
@@ -49,14 +50,14 @@ export default function ProductPage(props: Props) {
 					<div className="col-span-2">
 						<PhotoGallery images={product.getGalleryImages()} />
 					</div>
-					<div className="col-span-3 flex flex-col gap-y-6">
-						<div className={"text-2xl font-semibold"}>
+					<div className="col-span-3">
+						<div className={"text-2xl font-semibold mb-6"}>
 							{product.getName(languageIso)}
 						</div>
 
 						{longDescription && (
 							<div
-								className="text-lg font-light"
+								className="mb-6"
 								dangerouslySetInnerHTML={{
 									__html: longDescription,
 								}}
@@ -64,23 +65,23 @@ export default function ProductPage(props: Props) {
 						)}
 
 						{subtype instanceof AlbumProductData && (
-							<>
-								<div className="text-lg">
+							<div className={"mb-6"}>
+								<div className="text-lg font-semibold mb-3">
 									{getTranslationValue(
 										props.pageData.pageTranslations.fields.tracks,
 										languageIso,
 									)}
 								</div>
-								<ol className="list-decimal list-inside text-lg font-light">
+								<ol className="list-decimal list-inside">
 									{subtype.getTracks().map((track) => (
 										<li key={track}>{track}</li>
 									))}
 								</ol>
-							</>
+							</div>
 						)}
 
 						<div className={"flex gap-3"}>
-							{product.getOrderLink() && (
+							{orderLink && (
 								<Button
 									text={getTranslationValue(
 										props.pageData.pageTranslations.fields.orderButton,
@@ -89,7 +90,8 @@ export default function ProductPage(props: Props) {
 									size={"medium"}
 									variant={"primary"}
 									color={"brand"}
-									to={product.getOrderLink()}
+									to={orderLink}
+									disabled={product.getStockQuantity() === 0}
 								/>
 							)}
 
