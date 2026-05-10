@@ -3,7 +3,6 @@ import { useAsync } from "react-use";
 import LanguageGuard from "./components/LanguageGuard";
 import PageLayout from "./components/PageLayout";
 import About from "./pages/About";
-import Album from "./pages/Album";
 import Contact from "./pages/Contact";
 import ProductPage from "./pages/ProductPage";
 import Shop from "./pages/Shop";
@@ -43,7 +42,6 @@ export default function App() {
 				>
 					<Route element={<PageLayout pageData={pageData} />}>
 						<Route path="" element={<Shop pageData={pageData} />} />
-						<Route path="album/:id" element={<Album pageData={pageData} />} />
 						<Route
 							path="product/:id"
 							element={<ProductPage pageData={pageData} />}

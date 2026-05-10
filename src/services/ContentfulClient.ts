@@ -6,7 +6,6 @@ import {
 	type LocaleCollection,
 } from "contentful";
 import type {
-	AlbumSkeleton,
 	PageConfigSkeleton,
 	PageTranslationsSkeleton,
 	ProductSkeleton,
@@ -25,15 +24,6 @@ export class ContentfulClient implements ContentfulClient {
 		});
 
 		this.client = baseClient.withAllLocales;
-	}
-
-	async getAlbums(): Promise<
-		EntryCollection<AlbumSkeleton, "WITH_ALL_LOCALES">
-	> {
-		return await this.client.getEntries<AlbumSkeleton>({
-			content_type: "album",
-			include: 2,
-		});
 	}
 
 	async getProducts(): Promise<

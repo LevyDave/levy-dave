@@ -12,27 +12,11 @@ export type RouteParams = {
 	id: string;
 };
 
-export interface AlbumSkeleton {
-	contentTypeId: "album";
-	fields: {
-		id: EntryFieldTypes.Text;
-		title: EntryFieldTypes.Text;
-		pagelink: EntryFieldTypes.Text;
-		artistname: EntryFieldTypes.Text;
-		description: EntryFieldTypes.RichText;
-		tracks: EntryFieldTypes.Array<EntryFieldTypes.Symbol>;
-		cover: EntryFieldTypes.AssetLink;
-		isAvailableForOrder: EntryFieldTypes.Boolean;
-		images: EntryFieldTypes.Array<EntryFieldTypes.AssetLink>;
-	};
-}
-
 export interface PageConfigSkeleton {
 	contentTypeId: "pageConfig";
 	fields: {
 		purchaseFormUrl: EntryFieldTypes.Text;
 		logo: EntryFieldTypes.AssetLink;
-		albums: EntryFieldTypes.Array<EntryFieldTypes.EntryLink<AlbumSkeleton>>;
 	};
 }
 
@@ -88,13 +72,6 @@ export type ApiProducts = EntryCollection<ProductSkeleton, "WITH_ALL_LOCALES">;
 
 export type ApiProduct = ApiProducts["items"][number];
 
-export type LocalizedAlbums = EntryCollection<
-	AlbumSkeleton,
-	"WITH_ALL_LOCALES"
->;
-
-export type LocalizedAlbum = LocalizedAlbums["items"][number];
-
 export type LocalizedPageConfig = Entry<PageConfigSkeleton, "WITH_ALL_LOCALES">;
 
 export type LocalizedPageTranslations = Entry<
@@ -103,8 +80,6 @@ export type LocalizedPageTranslations = Entry<
 >;
 
 export interface ContentfulClient {
-	getAlbums(): Promise<LocalizedAlbums>;
-
 	getPageConfig(): Promise<LocalizedPageConfig>;
 
 	getPageTranslations(): Promise<LocalizedPageTranslations>;
@@ -115,7 +90,6 @@ export interface ContentfulClient {
 }
 
 export type PageData = {
-	albums: LocalizedAlbums;
 	pageConfig: LocalizedPageConfig;
 	pageTranslations: LocalizedPageTranslations;
 	locales: LocaleCollection;

@@ -12,9 +12,8 @@ export class PageDataRepository {
 	constructor(private readonly client: ContentfulClient) {}
 
 	async getPageData(): Promise<PageData> {
-		const [albums, pageConfig, pageTranslations, locales, apiProducts] =
+		const [pageConfig, pageTranslations, locales, apiProducts] =
 			await Promise.all([
-				await this.client.getAlbums(),
 				await this.client.getPageConfig(),
 				await this.client.getPageTranslations(),
 				await this.client.getLocales(),
@@ -28,7 +27,6 @@ export class PageDataRepository {
 		}
 
 		return {
-			albums,
 			pageConfig,
 			pageTranslations,
 			locales,
