@@ -95,8 +95,14 @@ export class Product {
 		return value;
 	}
 
-	getSeeMoreLink() {
-		return this.base.fields.seeMoreLink?.pl;
+	getSeeMoreLink(languageIso: string) {
+		const rawSeeMoreLink = this.base.fields.seeMoreLink;
+
+		if (!rawSeeMoreLink) {
+			return null;
+		}
+
+		return getTranslationValue(rawSeeMoreLink, languageIso);
 	}
 
 	getOrderLink(languageIso: string) {

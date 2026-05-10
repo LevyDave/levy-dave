@@ -25,6 +25,7 @@ export default function ProductPage(props: Props) {
 	const longDescription = product.getLongDescription(languageIso);
 	const subtype = product.getSubtype();
 	const orderLink = product.getOrderLink(languageIso);
+	const seeMoreLink = product.getSeeMoreLink(languageIso);
 
 	return (
 		<>
@@ -95,7 +96,7 @@ export default function ProductPage(props: Props) {
 								/>
 							)}
 
-							{product.getSeeMoreLink() && (
+							{seeMoreLink && (
 								<Button
 									text={getTranslationValue(
 										props.pageData.pageTranslations.fields.pagelink,
@@ -104,7 +105,7 @@ export default function ProductPage(props: Props) {
 									size={"medium"}
 									variant={"ghost"}
 									color={"brand"}
-									to={product.getSeeMoreLink()}
+									to={seeMoreLink}
 								/>
 							)}
 						</div>
